@@ -1,4 +1,19 @@
 text {
   font-size: 36px;
+  font-family: monospace;
   color: white;
- } 
+}
+
+text.enter {
+  fill: green;
+}
+
+text.update {
+  fill: #333;
+}
+
+circle {
+  fill: red;
+  stroke: green;
+  stroke-width: 1px;
+}
