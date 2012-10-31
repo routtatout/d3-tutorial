@@ -48,51 +48,61 @@ D3Demo = {
   },
 
   UpdateAlphabetDemo: {
-    // from http://bl.ocks.org/3808218
-    ALPHABET: "John R. Reigart III".split(""),
+    ORIGINAL_MY_NAME: null,
+    MY_NAME_FREQUENCY: 7,
     W: 960,
     H: 200,
     SHUFFLE_INTERVAL: null,
-
+ 
+    myName: null,    
     svg: null,
 
     init: function(){
+      this.myName = this.getMyNameText().split("");
+      this.ORIGINAL_MY_NAME = this.getMyNameText().split("");
       this.appendSvg();
-      this.update( this.ALPHABET );
+      this.update( this.myName );
+    },
+
+    getMyNameText: function(){
+      return "John R. Reigart III";
     },
 
     appendSvg: function(){
-      this.svg = d3.select("body").append("svg")
-        .attr("width", this.W)
-        .attr("height", this.H)
+      this.svg = d3.select( "body" ).append( "svg" )
+        .attr( "width", this.W )
+        .attr( "height", this.H )
       .append("g")
-        .attr("transform", "translate(32," + (this.H / 2) + ")");
+        .attr( "transform", "translate( 32," + ( this.H / 2 ) + ")" );
     },
 
     shuffleAlphabet: function(){
-      var that = this;
-      var shuffle = function(a) {
-        console.log(a + ":" + typeof a);
+      var that = this, shuffleCount = 0;
+      var showOriginalText = function(){
+        return shuffleCount % that.MY_NAME_FREQUENCY == 0;
+      }
+      var shuffle = function( a ) {
+        shuffleCount++;
         var m = a.length, t, i;
         while (m) {
           i = Math.floor( Math.random() * m-- );
           t = a[m], a[m] = a[i], a[i] = t;
         }
-        return a;
-      }
+        if( !showOriginalText() ){
+          return a.slice( 0, Math.floor( Math.random() * that.myName.length ) ).sort();
+        } else {
+          return that.ORIGINAL_MY_NAME;
+        }
+      };
+
       this.SHUFFLE_INTERVAL = setInterval( function() {
-        console.log(that.ALPHABET);
-        that.update( shuffle( that.ALPHABET )
-            .slice( 0, Math.floor( Math.random() * 26) )
-            .sort()
-          );
+        that.update( shuffle( that.myName ) );
       }, 2000 );
     },
 
     update: function( data ){
-      var text = this.svg.selectAll("text")
+      var text = this.svg.selectAll( "text" )
         .data( data, function(d) { return d; } );
-
       
       // UPDATE
       // Update old elements as needed.
@@ -127,6 +137,14 @@ D3Demo = {
     }
   }
 }
+
+var myName = "John R. Reigart III".split("");
+var ORIGINAL_MY_NAME = null;
+ORIGINAL_MY_NAME = myName.slice();
+console.log( myName);
+console.log( ORIGINAL_MY_NAME);
+
+
 
 D3Demo.CircleDemo.buildSvg();
 D3Demo.CircleDemo.makeCircles();
