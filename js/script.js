@@ -49,7 +49,7 @@ D3Demo = {
 
   UpdateAlphabetDemo: {
     // from http://bl.ocks.org/3808218
-    ALPHABET: "abcdefghijklmnopqrstuvwxyz".split(""),
+    ALPHABET: "John R. Reigart III".split(""),
     W: 960,
     H: 200,
     SHUFFLE_INTERVAL: null,
@@ -86,33 +86,44 @@ D3Demo = {
             .slice( 0, Math.floor( Math.random() * 26) )
             .sort()
           );
-      }, 1000 );
+      }, 2000 );
     },
 
     update: function( data ){
       var text = this.svg.selectAll("text")
-      .data( data, function(d) { return d; } );
+        .data( data, function(d) { return d; } );
 
+      
       // UPDATE
       // Update old elements as needed.
-      text.attr( "class", "update ");
+      text.attr( "class", "update ")
+        .transition()
+          .duration( 750 )
+          .attr( "x", function( d, i ) { return i * 32; } );
 
       // ENTER
       // Create new elements as needed.
-      text.enter().append("text")
+      text.enter().append( "text" )
           .attr("class", "enter")
-          .attr("dy", ".35em")
-          .text(function(d) { return d; });;
-
-      // ENTER + UPDATE
-      // Appending to the enter selection expands the update selection to include
-      // entering elements; so, operations on the update selection after appending to
-      // the enter selection will apply to both entering and updating nodes.
-      text.attr("x", function(d, i) { return i * 32; })
+          .attr( "dy", ".35em")
+          .attr( "y", -100 )
+          .attr( "x", function( d, i ) { return i * 32; } )
+          .style( "fill-opacity", 1e-6 )
+          .text( function(d) { return d; } )
+        .transition()
+          .duration( 750 )
+          .attr( "y", 0 )
+          .style( "fill-opacity", 1 );
 
       // EXIT
       // Remove old elements as needed.
-      text.exit().remove();
+      text.exit()
+          .attr("class", "exit")
+        .transition()
+          .duration( 750 )
+          .attr( "y", 100 )
+          .style( "fill-opacity", 1e-6 )
+          .remove();
     }
   }
 }
@@ -123,3 +134,10 @@ D3Demo.CircleDemo.addText();
 
 D3Demo.UpdateAlphabetDemo.init();
 D3Demo.UpdateAlphabetDemo.shuffleAlphabet();
+
+
+
+
+
+
+
