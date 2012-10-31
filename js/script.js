@@ -86,12 +86,12 @@ D3Demo = {
             .slice( 0, Math.floor( Math.random() * 26) )
             .sort()
           );
-      }, 10000 );
+      }, 1000 );
     },
 
     update: function( data ){
       var text = this.svg.selectAll("text")
-      .data( data );
+      .data( data, function(d) { return d; } );
 
       // UPDATE
       // Update old elements as needed.
@@ -101,14 +101,14 @@ D3Demo = {
       // Create new elements as needed.
       text.enter().append("text")
           .attr("class", "enter")
-          .attr("x", function(d, i) { return i * 32; })
-          .attr("dy", ".35em");
+          .attr("dy", ".35em")
+          .text(function(d) { return d; });;
 
       // ENTER + UPDATE
       // Appending to the enter selection expands the update selection to include
       // entering elements; so, operations on the update selection after appending to
       // the enter selection will apply to both entering and updating nodes.
-      text.text( function(d) { return d; } );
+      text.attr("x", function(d, i) { return i * 32; })
 
       // EXIT
       // Remove old elements as needed.
@@ -116,7 +116,6 @@ D3Demo = {
     }
   }
 }
-
 
 D3Demo.CircleDemo.buildSvg();
 D3Demo.CircleDemo.makeCircles();
