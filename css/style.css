@@ -17,3 +17,18 @@ circle {
   stroke: green;
   stroke-width: 1px;
 }
+
+.chart {
+  clear: both;
+  display: block;
+}
+
+.chart .bar {
+  display: block;
+  font: 10px sans-serif;
+  background-color: steelblue;
+  text-align: right;
+  padding: 3px;
+  margin: 1px;
+  color: white;
+}

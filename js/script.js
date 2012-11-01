@@ -10,7 +10,7 @@ D3Demo = {
     text: null,
 
     buildSvg: function(){
-      this.svg = d3.select("#chart")
+      this.svg = d3.select("#hw-chart")
         .append("svg")
         .attr("width", this.W)
         .attr("height", this.H);
@@ -46,6 +46,7 @@ D3Demo = {
       alert(this.DATA);
     }
   },
+
 
   UpdateAlphabetDemo: {
     ORIGINAL_MY_NAME: null,
@@ -135,6 +136,30 @@ D3Demo = {
           .style( "fill-opacity", 1e-6 )
           .remove();
     }
+  },
+
+  BarChartDemo: {
+    DATA: [4, 8, 15, 16, 23, 42],
+    chart: null,
+
+    init: function(){
+      this.appendChart();
+      this.appendBars();
+    },
+
+    appendChart: function(){
+      this.chart = d3.select( "BODY" ).append( "DIV" )
+        .attr("class", "chart");
+    },
+
+    appendBars: function(){
+      this.chart.selectAll( "DIV" )
+        .data( this.DATA )
+      .enter().append( "DIV" )
+        .attr("class", "bar")
+        .style( "width", function( d ) { return d * 10 + "px"; } )
+      .text( function( d ) { return d; } );
+    }
   }
 }
 
@@ -144,6 +169,8 @@ D3Demo.CircleDemo.addText();
 
 D3Demo.UpdateAlphabetDemo.init();
 D3Demo.UpdateAlphabetDemo.shuffleAlphabet();
+
+D3Demo.BarChartDemo.init();
 
 
 
