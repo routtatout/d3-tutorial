@@ -138,14 +138,6 @@ D3Demo = {
   }
 }
 
-var myName = "John R. Reigart III".split("");
-var ORIGINAL_MY_NAME = null;
-ORIGINAL_MY_NAME = myName.slice();
-console.log( myName);
-console.log( ORIGINAL_MY_NAME);
-
-
-
 D3Demo.CircleDemo.buildSvg();
 D3Demo.CircleDemo.makeCircles();
 D3Demo.CircleDemo.addText();
