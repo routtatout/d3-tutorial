@@ -139,7 +139,7 @@ D3Demo = {
   },
 
   BarChartDemo: {
-    DATA: [ 4, 8, 15, 16, 23, 42 ],
+    DATA: [ 4, 8, 15, 16, 23, 42, 80 ],
     divChart: null,
     svgChart: null,
     getBarWidth: null,
@@ -171,7 +171,7 @@ D3Demo = {
 
     appendDivBars: function(){
       this.divChart.selectAll( "div" )
-          .data( this.DATA )
+          .data( this.DATA, function( d ) { return d; } )
         .enter().append( "div" )
           .style( "width", 0 )
           .transition()
@@ -193,10 +193,11 @@ D3Demo = {
     },
 
     appendSvgBars: function(){
+      var that = this;
       this.svgChart.selectAll( "rect" )
-          .data( this.DATA )
+          .data( this.DATA, function( d ) { return d; } )
         .enter().append( "rect" )
-          .attr( "y", function( d, i ) { return i * 20; } )
+          .attr( "y", function( d, i ) { return i * ( 120 / that.DATA.length ) ; } )
           .attr( "width", 0 )
           .attr( "height", 0 )
           .transition()
@@ -208,7 +209,7 @@ D3Demo = {
       this.appendTickMarksToSvg();
 
       this.svgChart.selectAll( "rect" )
-          .data( this.DATA ) 
+          .data( this.DATA, function( d ) { return d; } ) 
         .exit()
           .transition()
           .duration( 1750 )
@@ -220,7 +221,7 @@ D3Demo = {
     appendTextToSvgBars: function( appendTo ){
       var that = this;
       appendTo.selectAll( "text" )
-        .data( this.DATA )
+        .data( this.DATA, function( d ) { return d; }  )
       .enter().append( "text" )
         .attr( "x", 0 )
         .attr( "y", function( d ) { return that.getBarHeight(d) + that.getBarHeight.rangeBand() / 2; } )
@@ -233,7 +234,7 @@ D3Demo = {
         .text( String );
 
       appendTo.selectAll( "text" )
-        .data( this.DATA )
+        .data( this.DATA, function( d ) { return d; }  )
       .exit().remove( "text" )
         .remove();
     },
