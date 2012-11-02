@@ -211,11 +211,9 @@ D3Demo = {
           .data( this.DATA ) 
         .exit()
           .transition()
-          .duration( 550 )
-          .attr( "y", function( d, i ) { return i * 18; } )
-          .transition()
           .duration( 1750 )
-          .attr( "y", 120 )
+          .attr( "transform", "rotate( 20 )")
+          .attr( "y", 140 )
           .remove();      
     },
 
