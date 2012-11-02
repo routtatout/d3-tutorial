@@ -1,8 +1,8 @@
 var D3Demo = D3Demo || {}
 D3Demo = {
   CircleDemo: {
-    W: 960,
-    H: 200,
+    W: "100%",
+    H: "120px",
     DATA: [ 32, 57, 112, 293 ],
 
     svg: null,
@@ -51,8 +51,8 @@ D3Demo = {
   UpdateAlphabetDemo: {
     ORIGINAL_MY_NAME: null,
     MY_NAME_FREQUENCY: 7,
-    W: 960,
-    H: 200,
+    W: "100%",
+    H: "200",
     SHUFFLE_INTERVAL: null,
  
     myName: null,    
@@ -139,26 +139,131 @@ D3Demo = {
   },
 
   BarChartDemo: {
-    DATA: [4, 8, 15, 16, 23, 42],
-    chart: null,
+    DATA: [ 4, 8, 15, 16, 23, 42 ],
+    divChart: null,
+    svgChart: null,
+    getBarWidth: null,
+    getBarHeight: null,
 
     init: function(){
-      this.appendChart();
-      this.appendBars();
+      this.setBarWidthAndHeight();
+      this.appendDivChart();
+      this.appendDivBars();
+      this.appendSvgChart();
+      this.appendSvgBars();
     },
 
-    appendChart: function(){
-      this.chart = d3.select( "BODY" ).append( "DIV" )
-        .attr("class", "chart");
+    setBarWidthAndHeight: function(){
+      this.getBarWidth = d3.scale.linear()
+        .domain( [ 0, d3.max( this.DATA ) ] )
+        .range( [ 0, "90%" ] );
+      
+      this.getBarHeight = d3.scale.ordinal()
+        .domain( this.DATA )
+          .rangeBands( [ 0, 120 ] );
     },
 
-    appendBars: function(){
-      this.chart.selectAll( "DIV" )
+    appendDivChart: function(){
+      this.divChart = d3.select( "body" ).append( "div" )
+        .text( "Using <div>s" )
+        .attr( "class", "chart" );
+    },
+
+    appendDivBars: function(){
+      this.divChart.selectAll( "div" )
+          .data( this.DATA )
+        .enter().append( "div" )
+          .style( "width", 0 )
+          .transition()
+          .duration( 1750 )
+          .style( "width", this.getBarWidth )
+          .transition()
+          .text( String );
+    },
+
+    appendSvgChart: function(){
+      this.svgChart = d3.select( "body" ).append( "div" )
+          .text( "Using <svg>")
+        .append( "svg" )
+          .attr( "class", "chart" )
+          .attr( "width", "100%" )
+          .attr( "height", 20 * ( this.DATA.length + 1 ) )
+        .append( "g" )
+          .attr( "transform", "translate( 10, 15 )" );
+    },
+
+    appendSvgBars: function(){
+      this.svgChart.selectAll( "rect" )
+          .data( this.DATA )
+        .enter().append( "rect" )
+          .attr( "y", function( d, i ) { return i * 20; } )
+          .attr( "width", 0 )
+          .attr( "height", 0 )
+          .transition()
+          .duration( 1750 )
+          .attr( "width", this.getBarWidth )
+          .attr( "height", this.getBarHeight.rangeBand() );
+
+      this.appendTextToSvgBars( this.svgChart );
+      this.appendTickMarksToSvg();
+
+      this.svgChart.selectAll( "rect" )
+          .data( this.DATA ) 
+        .exit()
+          .transition()
+          .duration( 550 )
+          .attr( "y", function( d, i ) { return i * 18; } )
+          .transition()
+          .duration( 1750 )
+          .attr( "y", 120 )
+          .remove();      
+    },
+
+    appendTextToSvgBars: function( appendTo ){
+      var that = this;
+      appendTo.selectAll( "text" )
         .data( this.DATA )
-      .enter().append( "DIV" )
-        .attr("class", "bar")
-        .style( "width", function( d ) { return d * 10 + "px"; } )
-      .text( function( d ) { return d; } );
+      .enter().append( "text" )
+        .attr( "x", 0 )
+        .attr( "y", function( d ) { return that.getBarHeight(d) + that.getBarHeight.rangeBand() / 2; } )
+        .attr( "dx", -3 ) // padding-right
+        .attr( "dy", ".35em" ) // vertical-align: middle
+        .attr( "text-anchor", "end" ) // text-align: right
+        .transition()
+        .duration( 3750 )
+        .attr( "x", this.getBarWidth )
+        .text( String );
+
+      appendTo.selectAll( "text" )
+        .data( this.DATA )
+      .exit().remove( "text" )
+        .remove();
+    },
+
+    appendTickMarksToSvg: function(){
+      this.svgChart.selectAll( "line" )
+          .data( this.getBarWidth.ticks( 10 ) )
+        .enter().append( "line" )
+          .attr( "x1", this.getBarWidth )
+          .attr( "x2", this.getBarWidth )
+          .attr( "y1", 0 )
+          .attr( "y2", 120 )
+          .style( "stroke", "#ccc" );
+
+      this.svgChart.selectAll( ".rule" )
+          .data( this.getBarWidth.ticks( 10 ) )
+        .enter().append( "text" )
+          .attr( "class", "rule" )
+          .attr( "x", this.getBarWidth )
+          .attr( "y", 0 )
+          .attr( "dy", -3 )
+          .attr( "text-anchor", "middle" )
+          .text( String );
+
+      this.svgChart.append( "line" )
+        .attr( "y1", 0 ) 
+        .attr( "y2", 120 )
+        .style( "stroke", "black" );
     }
   }
 }

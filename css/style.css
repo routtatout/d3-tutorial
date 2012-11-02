@@ -1,7 +1,7 @@
 text {
   font-size: 36px;
   font-family: monospace;
-  color: white;
+  fill: white;
 }
 
 text.enter {
@@ -18,17 +18,31 @@ circle {
   stroke-width: 1px;
 }
 
-.chart {
-  clear: both;
+.chart{
+  width: 50%;
+  margin-bottom: 2em;
   display: block;
 }
 
-.chart .bar {
-  display: block;
+div.chart div,
+svg.chart text {
   font: 10px sans-serif;
   background-color: steelblue;
   text-align: right;
   padding: 3px;
   margin: 1px;
   color: white;
+}
+
+svg.chart rect {
+  stroke: white;
+  fill: steelblue;
+}
+
+svg.chart > g > text {
+  fill: white;
+}
+
+svg.chart > g > text.rule {
+  fill: #333;
 }
