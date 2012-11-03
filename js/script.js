@@ -24,23 +24,23 @@ D3Demo = {
     makeCircles: function(){
       this.circles = this.svg.selectAll("circle")
         .data( this.DATA )
-        .enter().append("circle")
-        .attr("cx", 0)      
-        .attr("cy", 90)
-        .attr("r", 0)
+          .enter().append("circle")
+          .attr("cx", 0)      
+          .attr("cy", 90)
+          .attr("r", 0)
         .transition()
-        .attr("cx", String)
-        .attr("r", Math.sqrt);
+          .attr("cx", String)
+          .attr("r", Math.sqrt);
     },
     testExit: function(){
       this.DATA.pop();
       this.svg.selectAll("circle")
-      .data( this.DATA )
+          .data( this.DATA )
       .exit()
-      .transition()
-      .attr("cx", 0)
-      .attr("r", 0)
-      .remove();
+        .transition()
+          .attr("cx", 0)
+          .attr("r", 0)
+          .remove();
     },
     debug: function(){
       alert(this.DATA);
@@ -173,12 +173,12 @@ D3Demo = {
       this.divChart.selectAll( "div" )
           .data( this.DATA )
         .enter().append( "div" )
-          .style( "width", 0 )
+            .style( "width", 0 )
           .transition()
-          .duration( 1750 )
-          .style( "width", this.getBarWidth )
-          .transition()
-          .text( String );
+            .duration( 1750 )
+            .style( "width", this.getBarWidth )
+            .transition()
+            .text( String );
     },
 
     appendSvgChart: function(){
@@ -197,13 +197,13 @@ D3Demo = {
       this.svgChart.selectAll( "rect" )
           .data( this.DATA )
         .enter().append( "rect" )
-          .attr( "y", function( d, i ) { return i * ( 120 / that.DATA.length ) ; } )
-          .attr( "width", 0 )
-          .attr( "height", 0 )
+            .attr( "y", function( d, i ) { return i * ( 120 / that.DATA.length ) ; } )
+            .attr( "width", 0 )
+            .attr( "height", 0 )
           .transition()
-          .duration( 1750 )
-          .attr( "width", this.getBarWidth )
-          .attr( "height", this.getBarHeight.rangeBand() );
+            .duration( 1750 )
+            .attr( "width", this.getBarWidth )
+            .attr( "height", this.getBarHeight.rangeBand() );
 
       this.appendTextToSvgBars( this.svgChart );
       this.appendTickMarksToSvg();
@@ -223,15 +223,15 @@ D3Demo = {
       appendTo.selectAll( "text" )
         .data( this.DATA  )
       .enter().append( "text" )
-        .attr( "x", 0 )
-        .attr( "y", function( d ) { return that.getBarHeight(d) + that.getBarHeight.rangeBand() / 2; } )
-        .attr( "dx", -3 ) // padding-right
-        .attr( "dy", ".35em" ) // vertical-align: middle
-        .attr( "text-anchor", "end" ) // text-align: right
+          .attr( "x", 0 )
+          .attr( "y", function( d ) { return that.getBarHeight(d) + that.getBarHeight.rangeBand() / 2; } )
+          .attr( "dx", -3 ) // padding-right
+          .attr( "dy", ".35em" ) // vertical-align: middle
+          .attr( "text-anchor", "end" ) // text-align: right
         .transition()
-        .duration( 3750 )
-        .attr( "x", this.getBarWidth )
-        .text( String );
+          .duration( 3750 )
+          .attr( "x", this.getBarWidth )
+          .text( String );
 
       appendTo.selectAll( "text" )
         .data( this.DATA )
@@ -264,6 +264,115 @@ D3Demo = {
         .attr( "y2", 120 )
         .style( "stroke", "black" );
     }
+  },
+
+  BarChartTwoDemo: {
+    WIDTH: 20,
+    HEIGHT: 80,
+    X: null,
+    Y: null,
+    DATA: [],
+    TIME: 1297110663, // start time (seconds since epoch)
+
+    subscribers: 70, // start value (subscribers)
+    updateInterval: null,
+    svgChart: null,
+
+    init: function(){
+      this.initXY();
+      this.initData();
+      this.appendSvgChart();
+      console.log( 
+        this.DATA[ this.DATA.length - 1 ] +
+        this.X() + " " +
+        this.Y()
+      );
+      this.updateData();
+    },
+
+    initData: function(){
+      this.DATA = d3.range( 33 ).map( this.addNextData ); // starting dataset
+    },
+
+    initXY: function(){
+      // var that = D3Demo.BarChartTwoDemo;
+      this.X = d3.scale.linear()
+        .domain( [ 0, 1] )
+        .range( [ 0, this.WIDTH] );
+      this.Y = d3.scale.linear()
+        .domain( [ 0, 100 ] )
+        .rangeRound( [ 0, this.HEIGHT ] );
+    },
+
+    addNextData: function(){
+      var that = D3Demo.BarChartTwoDemo;
+      return {
+        time: ++that.TIME,
+        value: that.subscribers = Math.floor( Math.max( 10, Math.min( 90, that.subscribers + 10 * ( Math.random() - .5 ) ) ) )
+      }
+    },
+
+    updateData: function(){
+      var that = this;
+      this.updateInterval = setInterval( function() {
+        that.DATA.shift();
+        that.DATA.push( that.addNextData() );
+        that.redrawBars();
+      }, 1500 );
+    },
+
+    appendSvgChart: function(){
+      var chart = this.svgChart;
+      var data = this.DATA;
+      var that = this;
+
+      this.svgChart = d3.select( "body" ).append( "svg" )
+        .attr( "class", "chart bar-chart-two" )
+        .attr( "width", this.WIDTH * data.length - 1 )
+        .attr( "height", this.HEIGHT );
+  
+      this.svgChart.selectAll( "rect" )
+        .data( data )
+        .enter().append( "rect" )
+        .attr( "x", function( d, i ) { return that.X( i ) - .5; } )
+        .attr( "y", function( d ) { return that.HEIGHT - that.Y( d.value ) - .5; } )
+        .attr( "width", this.WIDTH )
+        .attr( "height", function( d ) { return that.Y( d.value ); } );
+
+      this.svgChart.append("line")
+        .attr( "x1", 0 )
+        .attr( "x2", this.WIDTH * this.DATA.length )
+        .attr( "y1", this.HEIGHT - .5 )
+        .attr( "y2", this.HEIGHT - .5 )
+        .style( "stroke", "#000" );
+    },
+
+    redrawBars: function(){
+      var that = this;
+      var rect = this.svgChart.selectAll("rect")
+        .data( this.DATA, function( d ) { return d.time; } );
+
+      // Enter…
+      rect.enter().insert( "rect", "line" )
+          .attr( "x", function( d, i ) { return that.X( i + 1 ) - .5; } )
+          .attr( "y", function( d ) { return that.HEIGHT - that.Y( d.value ) - .5; } )
+          .attr( "width", that.WIDTH )
+          .attr( "height", function( d ) { return that.Y( d.value); } )
+        .transition()
+          .duration( 1000 )
+          .attr("x", function( d, i ) { return that.X( i ) - .5; } );
+
+      // Update…
+      rect.transition()
+        .duration( 1000 )
+        .attr( "x", function( d, i ) { return that.X(i) - .5; } );
+
+      // Exit…
+      rect.exit().transition()
+        .duration(1000)
+        .attr("x", function(d, i) { return that.X(i - 1) - .5; } )
+        .remove();
+    }
   }
 }
 
@@ -275,6 +384,9 @@ D3Demo.UpdateAlphabetDemo.init();
 D3Demo.UpdateAlphabetDemo.shuffleAlphabet();
 
 D3Demo.BarChartDemo.init();
+
+D3Demo.BarChartTwoDemo.init();
+
 
 
 

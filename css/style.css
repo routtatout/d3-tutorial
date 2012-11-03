@@ -46,3 +46,7 @@ svg.chart > g > text {
 svg.chart > g > text.rule {
   fill: #333;
 }
+
+svg.bar-chart-two {
+  width: inherit;
+}
